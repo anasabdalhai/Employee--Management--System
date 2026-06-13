@@ -19,5 +19,13 @@
             </style>
         @endif
     </head>
-  
+  <body>
+  <center> <h2> السلام عليكم </h2></center>
+  <p>
+    hello 
+    anas
+    
+  </p>
+  <a href="layout.dashboard">dashboard</a>
+  </body>
 </html>

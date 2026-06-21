@@ -12,4 +12,10 @@ class Department extends Model
     {
         return $this->hasMany(User::class);
     }
+    public static function rules(){
+        return[
+            'name'=>'required|min:2',
+       
+        ];
+    }
 }

@@ -10,18 +10,14 @@ return new class extends Migration {
        Schema::create('departments', function (Blueprint $table) {
     $table->id();
     $table->string('name');
+     $table->string('description');
     $table->unsignedBigInteger('manager_id')->nullable(); // أضف العمود فقط
     $table->timestamps();
 });
     }
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
         Schema::dropIfExists('departments');
     }
 };
-//=================
-
-

@@ -11,20 +11,20 @@ class DepartmentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        // جلب جميع الأقسام مع عدد الموظفين في كل قسم
-        $departments = Department::withCount('users')->latest()->get();
+  public function index() {
+    // جلب جميع الأقسام مع عدد الموظفين لكل قسم
+    $departments = Department::withCount('users')->get();
 
-        return view('departments.index', compact('departments'));
-    }
+    return view('departments.index', compact('departments'));
+}
 
     /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('departments.create');
+        $department = new Department();
+        return view('departments.create', compact('department'));
     }
 
     /**
@@ -34,66 +34,62 @@ class DepartmentController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:100|unique:departments,name',
+            'manager_id' => 'nullable|integer|exists:employees,id',
         ]);
 
-        Department::create($validated);
+        $department = new Department();
+        $department->name = $validated['name'];
+        $department->manager_id = $validated['manager_id'] ?? null;
+        $department->save();
 
-        return redirect()
-            ->route('departments.index')
-            ->with('success', 'Department created successfully!');
+        return redirect()->route('departments.index')
+                         ->with('success', 'Department created successfully!');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Department $department)
+    public function show($id)
     {
-        // جلب القسم مع الموظفين التابعين له
-        $department->load('users');
-
+        $department = Department::findOrFail($id);
         return view('departments.show', compact('department'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Department $department)
+    public function edit($id)
     {
+        $department = Department::findOrFail($id);
         return view('departments.edit', compact('department'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Department $department)
+    public function update(Request $request, $id)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:100|unique:departments,name,' . $department->id,
+            'name' => 'required|string|max:100|unique:departments,name,' . $id,
+            'manager_id' => 'nullable|integer|exists:employees,id',
         ]);
 
+        $department = Department::findOrFail($id);
         $department->update($validated);
 
-        return redirect()
-            ->route('departments.index')
-            ->with('success', 'Department updated successfully!');
+        return redirect()->route('departments.index')
+                         ->with('update', 'Department updated successfully!');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Department $department)
+    public function destroy($id)
     {
-        // التحقق من وجود موظفين مرتبطين بالقسم
-        if ($department->users()->count() > 0) {
-            return redirect()
-                ->route('departments.index')
-                ->with('error', 'Cannot delete department because it has employees assigned to it.');
-        }
-
+        $department = Department::findOrFail($id);
         $department->delete();
 
-        return redirect()
-            ->route('departments.index')
-            ->with('success', 'Department deleted successfully!');
+        return redirect()->route('departments.index')
+                         ->with('delete', 'Department deleted successfully!');
     }
 }

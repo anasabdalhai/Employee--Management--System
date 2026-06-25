@@ -10,7 +10,7 @@ return new class extends Migration {
        Schema::create('departments', function (Blueprint $table) {
     $table->id();
     $table->string('name');
-     $table->string('description');
+    $table->text('description')->nullable();
     $table->unsignedBigInteger('manager_id')->nullable(); // أضف العمود فقط
     $table->timestamps();
 });

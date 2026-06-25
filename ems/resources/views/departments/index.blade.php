@@ -1,123 +1,62 @@
-
-
-
-    
-
-@extends('layouts.dashboard')
-
-@section('title')
-Departments
-@endsection
-
-@section('page_title') 
-  <h1>Departments</h1>
-@endsection
-
-@section('breadcrumb')
-<li class="breadcrumb-item active">Departments</li>
-@endsection
-
-
+@extends('layouts.app')
 
 @section('content')
-
-{{-- عرض الاشعارات --}}
-@if (session('success'))
-    <div class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-    </div>
-@endif
-
-@if (session('update'))
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        {{ session('update') }}
-    </div>
-@endif
-
-@if (session('delete'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('delete') }}
-    </div>
-@endif
-
-@if (session('error'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('error') }}
-    </div>
-@endif
-
-{{-- زر الإنشاء --}}
-<div class="row mb-3">
-    <div class="col text-right">
-        <a href="{{ route('Department.create') }}" class="btn btn-glass">
-            Create Department
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold text-primary">إدارة الأقسام</h2>
+            <p class="text-muted">نظرة عامة على الأقسام وعدد الموظفين في كل قسم</p>
+        </div>
+        <a href="{{ route('departments.create') }}" class="btn btn-success shadow-sm px-4">
+            <i class="fas fa-plus-circle me-2"></i> إضافة قسم جديد
         </a>
     </div>
-</div>
 
-<!-- جدول عرض الأقسام -->
-<div class="row ">
-    <div class="col-12">
-        <div class="card glass-card">
-
-            <div class="card-header">
-                <h3 class="card-title">Departments Table</h3>
-            </div>
-
-            <div class="card-body table-responsive p-0">
-                <table class="table table-hover modern-table text-nowrap">
-                    <thead>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-dark">
                         <tr>
-                            <th>ID</th>
-                            <th>Name</th>
-                            <th>Manager ID</th>
-                            <th>Created At</th>
-                            <th>Updated At</th>
-                            <th colspan="2">Actions</th>
+                            <th class="ps-4">اسم القسم</th>
+                            <th class="text-center">عدد الموظفين</th>
+                            <th class="text-center">العمليات</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        @foreach($departments as $dept)
+                        @forelse($departments as $department)
                         <tr>
-                            <td>{{ $dept->id }}</td>
-                            <td>{{ $dept->name }}</td>
-                            <td>{{ $dept->manager_id }}</td>
-                            <td>{{ $dept->created_at }}</td>
-                            <td>{{ $dept->updated_at }}</td>
-
-                            <td>
-                                <a href="{{ route('departments.edit', $dept->id) }}" 
-                                   class="btn btn-icon-edit btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                               
-
-                                <form action="{{ route('departments.destroy', $dept->id) }}" 
-                                      method="POST"
-                                      style="display:inline-block;">
-                                    @csrf
-                                    @method('DELETE')
-
-                                    <button class="btn btn-icon-delete btn-sm"
-                                            onclick="return confirm('Are you sure?')">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-
+                            <td class="ps-4 fw-bold">{{ $department->name }}</td>
+                            <td class="text-center">
+                                <span class="badge bg-primary rounded-pill px-3">
+                                    {{ $department->employees_count }} موظف
+                                </span>
                             </td>
-
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <a href="{{ route('departments.edit', $department->id) }}" class="btn btn-sm btn-outline-warning" title="تعديل">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form action="{{ route('departments.destroy', $department->id) }}" method="POST" class="d-inline">
+                                        @csrf @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="حذف" onclick="return confirm('هل أنت متأكد من حذف هذا القسم؟')">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
                         </tr>
-                        @endforeach
+                        @empty
+                        <tr>
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                <i class="fas fa-folder-open fa-2x d-block mb-2"></i> لا توجد أقسام مضافة حالياً
+                            </td>
+                        </tr>
+                        @endforelse
                     </tbody>
-
                 </table>
-               
             </div>
-
         </div>
     </div>
 </div>
-
 @endsection
-

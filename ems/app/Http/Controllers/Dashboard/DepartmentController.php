@@ -13,8 +13,7 @@ class DepartmentController extends Controller
      */
   public function index() {
     // جلب جميع الأقسام مع عدد الموظفين لكل قسم
-    $departments = Department::withCount('users')->get();
-
+    $departments = Department::withCount('employees')->get();
     return view('departments.index', compact('departments'));
 }
 
@@ -35,6 +34,7 @@ class DepartmentController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:100|unique:departments,name',
             'manager_id' => 'nullable|integer|exists:employees,id',
+            
         ]);
 
         $department = new Department();
